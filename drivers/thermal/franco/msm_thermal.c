@@ -26,14 +26,14 @@
 #include <linux/of.h>
 #include <linux/hrtimer.h>
 
-unsigned int temp_threshold = 65;
+unsigned int temp_threshold = 60;
 module_param(temp_threshold, int, 0644);
 
 // Core Control sysFS Toggle.
-bool core_control = true;
+bool core_control = false;
 static struct kobject *cc_kobj;
 
-uint32_t Throttle_Freq = 800000;
+uint32_t Throttle_Freq = 1113600;
 
 static struct thermal_info {
 	uint32_t cpuinfo_max_freq;
