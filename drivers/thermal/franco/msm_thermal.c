@@ -30,7 +30,7 @@ unsigned int temp_threshold = 60;
 module_param(temp_threshold, int, 0644);
 
 // Core Control sysFS Toggle.
-bool core_control = false;
+bool core_control = true;
 static struct kobject *cc_kobj;
 
 uint32_t Throttle_Freq = 1113600;
@@ -136,43 +136,19 @@ static void __ref check_temp(struct work_struct *work)
 	// Begin HotPlug Mechanism for Shoaib's Core Control.
 	if (core_control)
 	{
-	   if (temp >= 81)
+	   if (temp >= 75)
 	   {
-	      // Enable Core 0 (big).
-	      if (!cpu_online(0))
-		 cpu_up(0);
-
-	      // Disable Cores (big).
+	      // Disable big Cluster completely.
 	      if (cpu_online(3))
 	      	 cpu_down(3);
 	      if (cpu_online(2))
 	         cpu_down(2);
 	      if (cpu_online(1))
 	         cpu_down(1);
-
-	      // Disable Cores (LITTLE).
-	      if (cpu_online(7))
-	         cpu_down(7);
-	      if (cpu_online(6))
-	         cpu_down(6); 
+	      if (cpu_online(0))
+	         cpu_down(0);
 	   }
-	   else if (temp >= 60 && temp <= 80)
-	   {
-		   // Enable Cores (LITTLE).
-		   if (!cpu_online(6))
-		      cpu_up(6);
-	           if (!cpu_online(7))
-	 	      cpu_up(7);
-
-		   // Disable Cores (big).
-	           if (cpu_online(3))
-	      	      cpu_down(3);
-	           if (cpu_online(2))
-	              cpu_down(2);
-		   if (cpu_online(1))
-	              cpu_down(1);
-	   }
-	   else if (temp >= 49 && temp <= 59)
+	   else if (temp >= 60 && temp <= 70)
 	   {
 		   // Enable Cores (big).
 	           if (!cpu_online(0))
@@ -186,7 +162,7 @@ static void __ref check_temp(struct work_struct *work)
 	           if (cpu_online(2))
 	              cpu_down(2);
 	   }
-	   else if (temp == 45)
+	   else if (temp == 55)
 	   {
 	           int cpu;
 	           for_each_possible_cpu(cpu)
